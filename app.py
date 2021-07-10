@@ -28,14 +28,16 @@ def show_data():
 @app.route('/data/departures/<departure>')
 def show_deps(departure):
     new_data = {i: tours[i] for i in tours.keys() if tours[i]['departure'] == departure}
-    rus_departure = departures[departure]
     if new_data == {}:
         return abort(404)
+    rus_departure = departures[departure]
     return render_template('dep_data.html', departure=rus_departure, data=new_data)
 
 
 @app.route('/data/tours/<int:id>/')
 def show_tour(id):
+    if not id in tours.keys():
+        abort(404)
     night_str = str(tours[id]['nights'])
     if int(night_str) % 100 in range(5, 21):
         night_str = night_str + ' ночей'
