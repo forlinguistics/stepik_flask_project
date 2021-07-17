@@ -7,34 +7,25 @@ app = Flask(__name__)
 
 @app.route('/')
 def main_page():
-    return render_template('index.html')
+    return render_template('index.html', data=list(tours.items())[0:6])
 
 
 @app.route('/departures/<departure>/')
-def dep(departure):
-    return render_template('departure.html', departure=departure)
-
-
-@app.route('/tours/<id>/')
-def tour(id):
-    return render_template('tour.html', id=id)
-
-
-@app.route('/data/')
-def show_data():
-    return render_template('data.html', data=tours)
-
-
-@app.route('/data/departures/<departure>')
 def show_deps(departure):
     new_data = {i: tours[i] for i in tours.keys() if tours[i]['departure'] == departure}
     if new_data == {}:
         return abort(404)
     rus_departure = departures[departure]
-    return render_template('dep_data.html', departure=rus_departure, data=new_data)
+    rus_departure = 'и' + rus_departure[1:]
+    return render_template('departure.html', departure=rus_departure, data=new_data)
+'''
+todo 
+кривые картинки
+запушить в гитхаб
+запустить на хероку???
+'''
 
-
-@app.route('/data/tours/<int:id>/')
+@app.route('/tours/<int:id>/')
 def show_tour(id):
     if not id in tours.keys():
         abort(404)
@@ -45,7 +36,12 @@ def show_tour(id):
         night_str = night_str + ' ночь'
     else:
         night_str = night_str + ' ночи'
-    return render_template('tour_data.html', tour=tours[id], nights=night_str)
+    rus_departure = departures[tours[id]["departure"]]
+    rus_departure = 'и' + rus_departure[1:]
+    return render_template('tour.html', tour=tours[id], nights=night_str,dep = rus_departure)
+
+
+
 
 
 if __name__ == '__main__':
